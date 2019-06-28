@@ -1,6 +1,6 @@
 #' generate body for POST
 #'
-read_jma_body <- function(from, to, phpsessid){
+body_read_jma <- function(from, to, phpsessid){
   list(
     "stationNumList" = "[\"a0593\"]",
     "aggrgPeriod" = 9,
