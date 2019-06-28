@@ -4,7 +4,7 @@
 \alias{read_jma}
 \title{read csv data from jma web site}
 \usage{
-read_jma(from, to, phpsessid)
+read_jma(from, to, phpsessid, wait = 30)
 }
 \arguments{
 \item{from}{Date}
@@ -12,25 +12,26 @@ read_jma(from, to, phpsessid)
 \item{to}{Date}
 
 \item{phpsessid}{php session id obtained by `get_phpsessionid()`}
+
+\item{wait}{wait for given time after POST}
 }
 \value{
-csv data (character), can be processed with `readr::read_csv()`
+list of csv data (character), each csv can be processed with `readr::read_csv()`
 }
 \description{
 read csv data from jma web site
 }
 \examples{
-library("lubridate")
-library("readr")
+# library("lubridate")
+# library("readr")
 
 phpsessid <- get_phpsessionid()
 
 # Site: Fukuchiyama, Kyoto
-# Interval: from 2018-01-01 to 2018-02-01
+# Interval: from 2018-01-01 to 2018-12-31
 # Data: Temperature and Precipitation
 
-# lubridate::ymd()
-f <- read_jma(ymd("2018-01-01"), ymd("2018-02-01"), phpsessid)
+f <- read_jma(ymd("2018-01-01"), ymd("2018-12-31"), phpsessid)
 
 # parse csv using readr
 col_names <- c("Datetime", "Temp", "Temp_exists",
@@ -38,7 +39,11 @@ col_names <- c("Datetime", "Temp", "Temp_exists",
 col_types <- cols(col_datetime("\%Y/\%m/\%d \%H:\%M:\%S"),
 col_double(), col_integer(), col_integer(),
 col_double(), col_integer(), col_integer())
-d <- read_csv(f, col_names=col_names, col_types=, skip=5)
+d <- f \%>\%
+  map(function(x){
+    read_csv(x, col_names=col_names, col_types=, skip=5)
+    }) \%>\%
+    bind_rows()
 head(d)
 
 }

@@ -28,18 +28,37 @@ body_read_jma <- function(from, to, phpsessid){
 #' @param to Date
 #' @param phpsessid php session id obtained by `get_phpsessionid()`
 #'@return csv data (character), can be processed with `readr::read_csv()`
+#'
+read_jma_monthly <- function(from, to, phpsessid){
+  url <- "http://www.data.jma.go.jp/gmd/risk/obsdl/show/table"
+  body <- body_read_jma(from, to, phpsessid)
+  resp <- POST(url, body = body, encode = "form")
+  if (http_type(resp) != "text/x-comma-separated-values"){
+    warning(str_glue("Responce is not csv: from {from} to {to}"))
+    return(NA)
+  }
+  csv <- resp %>%
+    content(as = "text", encoding="SJIS")
+  csv
+}
+
+#' read csv data from jma web site
+#' @param from Date
+#' @param to Date
+#' @param phpsessid php session id obtained by `get_phpsessionid()`
+#' @param wait wait for given time after POST
+#'@return list of csv data (character), each csv can be processed with `readr::read_csv()`
 #' @examples
-#' library("lubridate")
-#' library("readr")
+#' # library("lubridate")
+#' # library("readr")
 #'
 #' phpsessid <- get_phpsessionid()
 #'
 #' # Site: Fukuchiyama, Kyoto
-#' # Interval: from 2018-01-01 to 2018-02-01
+#' # Interval: from 2018-01-01 to 2018-12-31
 #' # Data: Temperature and Precipitation
 #'
-#' # lubridate::ymd()
-#' f <- read_jma(ymd("2018-01-01"), ymd("2018-02-01"), phpsessid)
+#' f <- read_jma(ymd("2018-01-01"), ymd("2018-12-31"), phpsessid)
 #'
 #' # parse csv using readr
 #' col_names <- c("Datetime", "Temp", "Temp_exists",
@@ -47,15 +66,22 @@ body_read_jma <- function(from, to, phpsessid){
 #' col_types <- cols(col_datetime("%Y/%m/%d %H:%M:%S"),
 #' col_double(), col_integer(), col_integer(),
 #' col_double(), col_integer(), col_integer())
-#' d <- read_csv(f, col_names=col_names, col_types=, skip=5)
+#' d <- f %>%
+#'   map(function(x){
+#'     read_csv(x, col_names=col_names, col_types=, skip=5)
+#'     }) %>%
+#'     bind_rows()
 #' head(d)
 #'
 #' @export
-read_jma <- function(from, to, phpsessid){
-  url <- "http://www.data.jma.go.jp/gmd/risk/obsdl/show/table"
-  body <- read_jma_body(from, to, phpsessid)
-  resp <- httr::POST(url, body = body, encode = "form")
-  csv <- resp %>%
-    content(as = "text", encoding="SJIS")
-  csv
+read_jma <- function(from, to, phpsessid, wait=30){
+  intervals <- split_interval(from, to)
+  ret <- list()
+  for (x in intervals){
+    message(stringr::str_glue("POST: {int_start(x)} -- {int_end(x)}\n"))
+    csv <- read_jma_monthly(int_start(x), int_end(x), phpsessid)
+    ret <- c(ret, csv)
+    wait(wait)
+  }
+  ret
 }
