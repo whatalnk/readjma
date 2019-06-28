@@ -4,6 +4,6 @@
 #'
 #' @name readjma
 #' @docType package
-#' @import purrr stringr lubridate httr xml2 selectr
+#' @import purrr stringr lubridate httr xml2 selectr progress
 #' @importFrom magrittr "%>%"
 NULL

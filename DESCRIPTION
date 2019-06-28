@@ -15,4 +15,5 @@ Imports:
   lubridate, 
   httr, 
   xml2, 
-  selectr
+  selectr, 
+  progress
