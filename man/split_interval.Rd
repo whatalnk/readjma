@@ -6,6 +6,11 @@
 \usage{
 split_interval(from, to)
 }
+\arguments{
+\item{from}{Date}
+
+\item{to}{Date}
+}
 \description{
 split interval by 1 month
 }

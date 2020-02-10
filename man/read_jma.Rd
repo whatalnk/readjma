@@ -22,8 +22,10 @@ list of csv data (character), each csv can be processed with `readr::read_csv()`
 read csv data from jma web site
 }
 \examples{
-# library("lubridate")
-# library("readr")
+library("lubridate")
+library("readr")
+library("purrr")
+library("dplyr")
 
 phpsessid <- get_phpsessionid()
 
