@@ -2,18 +2,24 @@ Package: readjma
 Type: Package
 Title: Read climate data from Japan Meteorological Agency web site
 Version: 0.0.9000
-Author@R: person("whatalnk", email = "watnk@yahoo.com", role = c("aut", "cre"))
-Description: Read climate data from Japan Meteorological Agency web site
+Authors@R: person("whatalnk", email = "watnk@yahoo.com", role = c("aut", "cre"))
+Description: Read climate data from Japan Meteorological Agency web site.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Imports: 
-  magrittr, 
-  purrr, 
-  stringr, 
-  lubridate, 
-  httr, 
-  xml2, 
-  selectr, 
-  progress
+    magrittr,
+    purrr,
+    stringr,
+    lubridate,
+    httr,
+    xml2,
+    selectr,
+    progress,
+    dplyr,
+    readr
+Suggests: 
+    usethis
+Depends: 
+    R (>= 2.10)
