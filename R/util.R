@@ -1,5 +1,6 @@
 #' split interval by 1 month
-#'
+#' @param from Date
+#' @param to Date
 split_interval <- function(from, to){
   d1 <- floor_date(from, unit="month")
   d2 <- ceiling_date(to, unit="month")
@@ -19,4 +20,10 @@ wait <- function(sec){
     pb$tick()
     Sys.sleep(1)
   }
+}
+
+#' save internal data
+save_sysdata <- function(){
+  stations <- get_station_list()
+  usethis::use_data(stations, internal = TRUE)
 }
