@@ -1,2 +1,2 @@
 # readjma
-Obtaining ckimate data from JMA web site
+Obtaining climate data from JMA web site
